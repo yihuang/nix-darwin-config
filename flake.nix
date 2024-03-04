@@ -5,10 +5,11 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-darwin.url = "github:LnL7/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
-
+    home-manager.url = "github:nix-community/home-manager";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, nix-darwin, nixpkgs }:
+  outputs = inputs@{ self, nix-darwin, nixpkgs, home-manager }:
     let
       configuration = { pkgs, ... }:
         let
@@ -94,7 +95,25 @@
       # Build darwin flake using:
       # $ darwin-rebuild build --flake .#huangyi-m3mpb
       darwinConfigurations."huangyi-m3mpb" = nix-darwin.lib.darwinSystem {
-        modules = [ configuration ];
+        modules = [
+          configuration
+          home-manager.darwinModules.home-manager
+          {
+            users.users.huangyi = {
+              home = "/Users/huangyi";
+              shell = "zsh";
+            };
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.huangyi = {
+              home.stateVersion = "24.05";
+              programs.direnv.enable = true;
+            };
+
+            # Optionally, use home-manager.extraSpecialArgs to pass
+            # arguments to home.nix
+          }
+        ];
       };
 
       # Expose the package set, including overlays, for convenience.
