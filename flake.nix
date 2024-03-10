@@ -45,7 +45,8 @@
           # $ nix-env -qaP | grep wget
           environment.systemPackages =
             with pkgs; [
-              vim
+              neovim
+              (callPackage ./gopls.nix { })
             ];
 
           nix.distributedBuilds = true;
