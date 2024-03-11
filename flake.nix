@@ -99,8 +99,8 @@
     in
     {
       # Build darwin flake using:
-      # $ darwin-rebuild build --flake .#huangyi-m3mpb
-      darwinConfigurations."huangyi-m3mpb" = nix-darwin.lib.darwinSystem {
+      # $ darwin-rebuild build --flake .#dev
+      darwinConfigurations.dev = nix-darwin.lib.darwinSystem {
         modules = [
           configuration
           home-manager.darwinModules.home-manager
@@ -125,6 +125,6 @@
       };
 
       # Expose the package set, including overlays, for convenience.
-      darwinPackages = self.darwinConfigurations."huangyi-m3mpb".pkgs;
+      darwinPackages = self.darwinConfigurations.dev.pkgs;
     };
 }
