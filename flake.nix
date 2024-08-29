@@ -19,28 +19,24 @@
       configuration = { pkgs, ... }:
         let
           hostPlatform = "aarch64-darwin";
-          linuxSystem = builtins.replaceStrings [ "darwin" ] [ "linux" ] hostPlatform;
-
-          darwin-builder = nixpkgs.lib.nixosSystem {
-            system = linuxSystem;
-            modules = [
-              "${nixpkgs}/nixos/modules/profiles/macos-builder.nix"
-              {
-                virtualisation = {
-                  host.pkgs = pkgs;
-                  darwin-builder = {
-                    diskSize = 100 * 1024; # 100GB
-                    min-free = 50 * 1024 * 1024 * 1024; # 50GB
-                    max-free = 80 * 1024 * 1024 * 1024; # 80GB
-                    memorySize = 16 * 1024; # 16GB
-                    workingDirectory = "/var/lib/darwin-builder";
-                  };
-                };
-              }
-            ];
-          };
         in
         {
+          nix.linux-builder = {
+            enable = true;
+            maxJobs = 4;
+            config = {
+              virtualisation = {
+                cores = 6;
+                darwin-builder = {
+                  diskSize = 100 * 1024; # 100GB
+                  min-free = 50 * 1024 * 1024 * 1024; # 50GB
+                  max-free = 80 * 1024 * 1024 * 1024; # 80GB
+                  memorySize = 16 * 1024; # 16GB
+                };
+              };
+            };
+          };
+
           # List packages installed in system profile. To search by name, run:
           # $ nix-env -qaP | grep wget
           environment.systemPackages =
@@ -48,25 +44,6 @@
               neovim
               (callPackage ./gopls.nix { })
             ];
-
-          nix.distributedBuilds = true;
-          nix.buildMachines = [{
-            hostName = "linux-builder";
-            sshUser = "builder";
-            sshKey = "/etc/nix/builder_ed25519";
-            system = linuxSystem;
-            maxJobs = 4;
-            supportedFeatures = [ "kvm" "benchmark" "big-parallel" ];
-          }];
-          launchd.daemons.darwin-builder = {
-            command = "${darwin-builder.config.system.build.macos-builder-installer}/bin/create-builder";
-            serviceConfig = {
-              KeepAlive = true;
-              RunAtLoad = true;
-              StandardOutPath = "/var/log/darwin-builder.log";
-              StandardErrorPath = "/var/log/darwin-builder.log";
-            };
-          };
 
           # Auto upgrade nix package and the daemon service.
           services.nix-daemon.enable = true;
@@ -76,10 +53,10 @@
           nix.settings = {
             experimental-features = "nix-command flakes";
             trusted-users = [
+              "@admin"
               "root"
               "huangyi"
             ];
-            builders-use-substitutes = true;
             extra-platforms = [
               "x86_64-darwin"
             ];
