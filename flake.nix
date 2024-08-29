@@ -80,6 +80,9 @@
               "huangyi"
             ];
             builders-use-substitutes = true;
+            extra-platforms = [
+              "x86_64-darwin"
+            ];
           };
 
           # Create /etc/zshrc that loads the nix-darwin environment.
