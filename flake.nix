@@ -28,9 +28,9 @@
               virtualisation = {
                 cores = 6;
                 darwin-builder = {
-                  diskSize = 100 * 1024; # 100GB
-                  min-free = 50 * 1024 * 1024 * 1024; # 50GB
-                  max-free = 80 * 1024 * 1024 * 1024; # 80GB
+                  diskSize = 200 * 1024; # 200GB
+                  min-free = 100 * 1024 * 1024 * 1024; # 100GB
+                  max-free = 160 * 1024 * 1024 * 1024; # 160GB
                   memorySize = 16 * 1024; # 16GB
                 };
               };
