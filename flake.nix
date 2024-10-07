@@ -37,8 +37,8 @@
                 cores = 6;
                 darwin-builder = {
                   diskSize = 200 * 1024; # 200GB
-                  min-free = 100 * 1024 * 1024 * 1024; # 100GB
-                  max-free = 160 * 1024 * 1024 * 1024; # 160GB
+                  min-free = 1 * 1024 * 1024 * 1024; # 1GB
+                  max-free = 10 * 1024 * 1024 * 1024; # 10GB
                   memorySize = 16 * 1024; # 16GB
                 };
               };
