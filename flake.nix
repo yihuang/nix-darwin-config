@@ -57,7 +57,7 @@
               vim = "nvim";
             };
             variables = {
-              EDITOR = "vim";
+              EDITOR = "nvim";
             };
           };
 
