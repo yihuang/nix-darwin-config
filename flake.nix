@@ -14,9 +14,17 @@
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, nix-darwin, nixpkgs, home-manager, ... }:
+  outputs =
+    inputs@{
+      self,
+      nix-darwin,
+      nixpkgs,
+      home-manager,
+      ...
+    }:
     let
-      configuration = { pkgs, ... }:
+      configuration =
+        { pkgs, ... }:
         let
           hostPlatform = "aarch64-darwin";
         in
@@ -39,11 +47,19 @@
 
           # List packages installed in system profile. To search by name, run:
           # $ nix-env -qaP | grep wget
-          environment.systemPackages =
-            with pkgs; [
+          environment = {
+            systemPackages = with pkgs; [
               neovim
               (callPackage ./gopls.nix { })
+              nixfmt-rfc-style
             ];
+            shellAliases = {
+              vim = "nvim";
+            };
+            variables = {
+              EDITOR = "vim";
+            };
+          };
 
           # Auto upgrade nix package and the daemon service.
           services.nix-daemon.enable = true;
